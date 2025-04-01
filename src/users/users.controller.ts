@@ -9,22 +9,37 @@ export class UsersController {
     return usersService.getAllUsers();
   }
 
+  // alle ausgeben
+  // @Get(':id/:name/:gender')
+  // xgetUserById(
+  //   @Param() param: any) {
+  //     console.log(param);      
+  // }
+
+  // @Get(':id/:name/:gender')
+  // getUserById(
+  //   @Param('id') id: string,
+  //   @Param('name') name: string,
+  //   @Param('gender') gender?: string,
+  // ) {
+  //   return { id, name, gender: gender || 'unknown' };
+  // }
+
   @Get(':id')
-  // @Param('id') id: number
-  getUserById(@Param('id') id: number) {
+  getUserById(@Param('id') id: any) {
     const usersService = new UsersService();
-    return usersService.getUserById(id);
+    return usersService.getUserById(+id);
   }
 
   @Post()
-  createUser(){
+  createUser() {
     const user = {
       id: 4,
-      name: 'Ron Weasley',      
+      name: 'Ron Weasley',
       age: 22,
       gender: 'male',
-      isMarried: false
-    }
+      isMarried: false,
+    };
     const usersService = new UsersService();
     usersService.createUser(user);
     return 'A new user has been created';

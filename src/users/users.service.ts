@@ -37,7 +37,7 @@ export class UsersService {
   }
 
   getUserById(id: number) {
-    return this.users.find((user) => user.id === id);
+    return this.users.find(user => user.id === id);
   }
 
   createUser(user: {
