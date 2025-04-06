@@ -61,8 +61,8 @@ export class UsersController {
     const user = {
       id: 4,
       name: 'Ron Weasley',
-      age: 22,
       gender: 'male',
+      email: 'ron@gmx.com',
       isMarried: false,
     };
     this.usersService.createUser(user);
