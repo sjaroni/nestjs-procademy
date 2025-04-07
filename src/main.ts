@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,6 +12,16 @@ async function bootstrap() {
   //   credentials: true,
   //   allowedHeaders: 'Content-Type, Accept',
   // });
+
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true, // erlaubt nur die Felder, die im DTO definiert sind
+    forbidNonWhitelisted: true, // erlaubt nur die Felder, die im DTO definiert sind
+    transform: true // konvertiert die Daten in den Typ, der im DTO definiert ist
+    // transformOptions: {
+    //   enableImplicitConversion: true,
+    // },
+    // skipMissingProperties: false,
+  }));
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

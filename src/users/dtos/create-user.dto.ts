@@ -1,6 +1,7 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class CreateUserDto {
+  @IsNumber()
   id: number;
   
   @IsString({message: 'Name must be a string'})
@@ -10,11 +11,11 @@ export class CreateUserDto {
 
   @IsString()
   @IsOptional()
-  gender: string;
-  // gender?: string;
+  gender?: string;
 
   @IsEmail()
   email: string;
 
+  @IsBoolean()
   isMarried: boolean;
 }
