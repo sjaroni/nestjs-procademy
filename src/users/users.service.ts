@@ -8,6 +8,7 @@ export class UsersService {
     gender: string;
     email: string;
     isMarried: boolean;
+    password: string;
   }[] = [
     {
       id: 1,
@@ -15,6 +16,7 @@ export class UsersService {
       gender: 'male',
       email: 'john@gmx.com',
       isMarried: false,
+      password: 'test1234'
     },
     {
       id: 2,
@@ -22,6 +24,7 @@ export class UsersService {
       gender: 'female',
       email: 'sarah@gmx.com',
       isMarried: false,
+      password: 'test1234'
     },
     {
       id: 3,
@@ -29,6 +32,7 @@ export class UsersService {
       gender: 'male',
       email: 'harry@gmx.com',
       isMarried: true,
+      password: 'test1234'
     },
   ];
 
@@ -46,6 +50,7 @@ export class UsersService {
     gender: string;
     email: string;
     isMarried: boolean;
+    password: string
   }) {
     this.users.push(user);
     return user;
