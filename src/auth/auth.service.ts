@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(@Inject(forwardRef(() => UsersService) ) private readonly usersService: UsersService) {}
+
+  isAuthenticated: Boolean = false;
 
   login(email: string, password: string) {
     const user = this.usersService.users.find(
@@ -12,6 +14,7 @@ export class AuthService {
     if (!user) {
       return 'Invalid credentials';
     }
+    this.isAuthenticated = true;
     return 'MY_TOKEN';
   }
 }
