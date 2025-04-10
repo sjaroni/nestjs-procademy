@@ -12,6 +12,7 @@ export class AuthService {
       (user) => user.email === email && user.password === password,
     );
     if (!user) {
+      this.isAuthenticated = false;
       return 'Invalid credentials';
     }
     this.isAuthenticated = true;
