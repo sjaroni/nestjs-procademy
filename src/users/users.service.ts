@@ -11,7 +11,9 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  getAllUsers() {}
+  getAllUsers() {
+    return this.userRepository.find();
+  }
 
   public async createUser(userDto: CreateUserDto) {
     // validate if a user exists with the given email
