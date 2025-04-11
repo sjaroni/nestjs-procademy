@@ -8,8 +8,7 @@ export class TweetController {
 
   @Get()
   getAllTweets() {
-    //return 'Hello Tweet!';
-    return this.tweetService.getAllTweets();
+    return 'Hello Tweet!';
   }
 
   @Get(':userId')
