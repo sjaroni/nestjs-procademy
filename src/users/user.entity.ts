@@ -1,4 +1,6 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { IsOptional } from 'class-validator';
+import { Profile } from 'src/profile/profile.entity';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class User {
@@ -28,6 +30,11 @@ export class User {
     length: 100,
   })
   password: string;
+
+  @OneToOne(() => Profile)
+  @JoinColumn()
+  @IsOptional()
+  profile?: Profile;
 
   @CreateDateColumn()
   createdAt: Date;
