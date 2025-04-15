@@ -1,37 +1,48 @@
 import { IsOptional } from 'class-validator';
 import { Profile } from 'src/profile/profile.entity';
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
-  
   @PrimaryGeneratedColumn()
   id: number;
-  
+
   @Column({
-    type: "varchar",
+    type: 'varchar',
     nullable: false,
     length: 24,
-    unique: true
+    unique: true,
   })
   username: string;
 
   @Column({
-    type: "varchar",
+    type: 'varchar',
     nullable: false,
     length: 100,
-    unique: true
+    unique: true,
   })
   email: string;
 
   @Column({
-    type: "varchar",
+    type: 'varchar',
     nullable: false,
     length: 100,
   })
   password: string;
 
-  @OneToOne(() => Profile)
+  @OneToOne(() => Profile, { 
+    cascade: ['insert'],
+    eager: true
+  })
   @JoinColumn()
   @IsOptional()
   profile?: Profile;
@@ -44,5 +55,4 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt: Date;
-
 }
