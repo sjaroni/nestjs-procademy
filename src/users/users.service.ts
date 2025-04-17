@@ -16,17 +16,34 @@ export class UsersService {
   ) {}
 
   getAllUsers() {
-    return this.userRepository.find();
+    return this.userRepository.find({
+      relations: {
+        profile: true,
+      },
+    });
   }
 
   public async createUser(userDto: CreateUserDto) {
     // Create a Profile & Save
-    userDto.profile = userDto.profile ?? {};    
+    userDto.profile = userDto.profile ?? {};
 
     // Create User Object
     let user = this.userRepository.create(userDto);
 
     // Save the user object
-    return await this.userRepository.save(user)
+    return await this.userRepository.save(user);
+  }
+
+  public async deleteUser(id: number) {
+   
+    //Delete user
+    await this.userRepository.delete(id);
+
+    //Send a response
+    return {deleted: true};
+  }
+
+  public async findUserById(id: number) {
+    return await this.userRepository.findOneBy({ id });
   }
 }
