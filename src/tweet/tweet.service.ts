@@ -12,7 +12,28 @@ export class TweetService {
     private readonly tweetRepository: Repository<Tweet>,
   ) {}
 
-  getTweet(userId: number) {}
+
+  public async getAllTweets() {
+    // Find all the tweets
+    return await this.tweetRepository.find({
+      relations: {
+        user: true,
+      },
+    });
+  }
+
+  public async getTweets(userId: number) {
+    // Find all the tweets of the user with the given userId
+    // user is from tweet.entity
+    // id is from user.entity
+    // userId is from the request
+    return await this.tweetRepository.find({ 
+      where: {user: {id: userId}},
+      relations: {
+        user: true,
+      },
+    })
+  }
 
   public async createTweet(createTweetDto: CreateTweetDto) {
     // Find user with the given userId from user table
