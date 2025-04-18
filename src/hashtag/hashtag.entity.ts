@@ -7,7 +7,8 @@ export class Hashtag {
 
   @Column({
     type: 'text',
-    nullable: false
+    nullable: false,
+    unique: true,
   })
   name: string;
 }
