@@ -4,10 +4,13 @@ import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { Tweet } from './tweet.entity';
 import { CreateTweetDto } from './dto/create-tweet.dto';
+import { HashtagService } from 'src/hashtag/hashtag.service';
+
 @Injectable()
 export class TweetService {
   constructor(
     private readonly userService: UsersService,
+    private readonly hashtagService: HashtagService,
     @InjectRepository(Tweet)
     private readonly tweetRepository: Repository<Tweet>,
   ) {}
@@ -42,10 +45,13 @@ export class TweetService {
       throw new Error('User not found');
     }
 
+    const hashtags = await this.hashtagService.findHashtags(createTweetDto.hashtags || [])
+
     // create a new tweet
-    let tweet = await this.tweetRepository.create({
+    let tweet = this.tweetRepository.create({
       ...createTweetDto,
-      user: user,
+      user,
+      hashtags,
     });
     // Save the tweet
     return await this.tweetRepository.save(tweet);
