@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Tweet } from './tweet.entity';
 import { CreateTweetDto } from './dto/create-tweet.dto';
 import { HashtagService } from 'src/hashtag/hashtag.service';
+import { UpdateTweetDto } from './dto/update-tweet.dto';
 
 @Injectable()
 export class TweetService {
@@ -15,12 +16,12 @@ export class TweetService {
     private readonly tweetRepository: Repository<Tweet>,
   ) {}
 
-
   public async getAllTweets() {
     // Find all the tweets
     return await this.tweetRepository.find({
       relations: {
         user: true,
+        hashtags: true,
       },
     });
   }
@@ -30,12 +31,13 @@ export class TweetService {
     // user is from tweet.entity
     // id is from user.entity
     // userId is from the request
-    return await this.tweetRepository.find({ 
-      where: {user: {id: userId}},
+    return await this.tweetRepository.find({
+      where: { user: { id: userId } },
       relations: {
         user: true,
+        hashtags: true,
       },
-    })
+    });
   }
 
   public async createTweet(createTweetDto: CreateTweetDto) {
@@ -45,7 +47,10 @@ export class TweetService {
       throw new Error('User not found');
     }
 
-    const hashtags = await this.hashtagService.findHashtags(createTweetDto.hashtags || [])
+    // Fetch all the hashtags based on hastag array
+    const hashtags = await this.hashtagService.findHashtags(
+      createTweetDto.hashtags || [],
+    );
 
     // create a new tweet
     let tweet = this.tweetRepository.create({
@@ -56,4 +61,39 @@ export class TweetService {
     // Save the tweet
     return await this.tweetRepository.save(tweet);
   }
+
+  public async updateTweet(updateTweetDto: UpdateTweetDto) {
+    // Fetch all the hashtags based on hashtag array
+    const hashtags = await this.hashtagService.findHashtags(
+      updateTweetDto.hashtags || [],
+    );
+
+    // Find the tweet with the given id
+    const tweet = await this.tweetRepository.findOneBy({
+      id: updateTweetDto.id,
+    });
+
+    // Update properties of the tweet
+    if (tweet) {
+      tweet.text = updateTweetDto.text ?? tweet.text;
+      tweet.image = updateTweetDto.image ?? tweet.image;
+      tweet.hashtags = hashtags;
+
+      // Save the tweet
+      return await this.tweetRepository.save(tweet);
+    }
+  }
+
+  public async deleteTweet(id: number) {
+    // Find the tweet with the given id
+    //const tweet = await this.tweetRepository.findOneBy({ id });
+
+    // If tweet is not found, throw an error
+    // if (tweet) {
+    //   throw new Error('Tweet not found');
+    // } 
+    return await this.tweetRepository.delete(id);
+    // Delete the tweet
+  }
+
 }
