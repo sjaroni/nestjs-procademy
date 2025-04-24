@@ -37,7 +37,7 @@ export class Tweet {
   @ManyToOne(() => User, (user) => user.tweets)
   user: User;
 
-  @ManyToMany(() => Hashtag)
-  @JoinTable()
+  @ManyToMany(() => Hashtag, (hashtag) => hashtag.tweets) // Bi-directional relation
+  @JoinTable() // Owning side of the relation
   hashtags: Hashtag[];
 }
