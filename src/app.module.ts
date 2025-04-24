@@ -18,6 +18,7 @@ const ENV = process.env.NODE_ENV;
     AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: !ENV ? '.env' : `.env.${ENV}`,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
