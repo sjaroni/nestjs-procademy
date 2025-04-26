@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, RequestTimeoutException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,20 +16,27 @@ export class UsersService {
     private profileRepository: Repository<Profile>,
 
     // private readonly configService: ConfigService,
-
   ) {}
 
-  getAllUsers() {
-
+  public async getAllUsers() {
     // const environment = this.configService.get<string>('ENV_MODE');
     // const environment = process.env.NODE_ENV;
     // console.log('Environment:', environment);
 
-    return this.userRepository.find({
-      relations: {
-        profile: true,
-      },
-    });
+    try {
+      return await this.userRepository.find({
+        relations: {
+          profile: true,
+        },
+      });
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'An error has accurred. Please try again', {
+          description: 'Could not connect to the database',
+          cause: error,
+        }
+      );
+    }
   }
 
   public async createUser(userDto: CreateUserDto) {
@@ -44,12 +51,11 @@ export class UsersService {
   }
 
   public async deleteUser(id: number) {
-   
     //Delete user
     await this.userRepository.delete(id);
 
     //Send a response
-    return {deleted: true};
+    return { deleted: true };
   }
 
   public async findUserById(id: number) {
