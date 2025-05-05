@@ -7,17 +7,17 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get()
-  getUsers() {
+  public getUsers() {
     return this.usersService.getAllUsers();
   }
 
   @Post()
-  createUser(@Body() user: CreateUserDto) {
-    this.usersService.createUser(user);
+  public createUser(@Body() user: CreateUserDto) {
+    return this.usersService.createUser(user);
   }
 
   @Delete(':id')
-  deleteUser(@Param('id', ParseIntPipe) id: number) {
+  public deleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.deleteUser(id);
   }
 

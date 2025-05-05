@@ -1,4 +1,8 @@
-import { Injectable, RequestTimeoutException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -30,24 +34,62 @@ export class UsersService {
         },
       });
     } catch (error) {
-      throw new RequestTimeoutException(
-        'An error has accurred. Please try again', {
-          description: 'Could not connect to the database',
-          cause: error,
-        }
-      );
+      if (error.code === 'ECONNREFUSED') {
+        throw new RequestTimeoutException(
+          'An error has accurred. Please try again',
+          {
+            description: 'Could not connect to the database',
+            cause: error,
+          },
+        );
+      }
+      throw error;
     }
   }
 
   public async createUser(userDto: CreateUserDto) {
-    // Create a Profile & Save
-    userDto.profile = userDto.profile ?? {};
+    try {
+      // Create a Profile & Save
+      userDto.profile = userDto.profile ?? {};
 
-    // Create User Object
-    let user = this.userRepository.create(userDto);
+      // Check if user with same username or email already exists
+      const existingUser = await this.userRepository.findOne({
+        where: [{ username: userDto.username }, { email: userDto.email }],
+      });
 
-    // Save the user object
-    return await this.userRepository.save(user);
+      if (existingUser) {
+        throw new BadRequestException('There is already a user with this username or email');
+      }
+
+      // Create User Object
+      let user = this.userRepository.create(userDto);
+
+      // Save the user object
+      return await this.userRepository.save(user);
+    } catch (error) {
+      if (error.code === 'ECONNREFUSED') {
+        throw new RequestTimeoutException(
+          'An error has accurred. Please try again',
+          {
+            description: 'Could not connect to the database',
+            cause: error,
+          },
+        );
+      }
+
+      throw error;
+
+      // Überprüfung wurde in den Try-Block verschoben
+      // if (error.code === 'ECONNREFUSED') {
+      //   throw new RequestTimeoutException(
+      //     'An error has accurred. Please try again',
+      //     {
+      //       description: 'Could not connect to the database',
+      //       cause: error,
+      //     },
+      //   );
+      // }
+    }
   }
 
   public async deleteUser(id: number) {
