@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
   RequestTimeoutException,
 } from '@nestjs/common';
@@ -8,6 +10,7 @@ import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { Profile } from 'src/profile/profile.entity';
+import { table } from 'console';
 // import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -58,7 +61,9 @@ export class UsersService {
       });
 
       if (existingUser) {
-        throw new BadRequestException('There is already a user with this username or email');
+        throw new BadRequestException(
+          'There is already a user with this username or email',
+        );
       }
 
       // Create User Object
@@ -101,6 +106,27 @@ export class UsersService {
   }
 
   public async findUserById(id: number) {
-    return await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOneBy({ id });
+    
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: `The user with the id ${id} was not found`,
+          table: 'user',
+        },
+        HttpStatus.NOT_FOUND,
+        {
+          // 3rd optional argument is optional
+          // not send back to the client
+          // used for logging in database or logfile
+          // helfpul for debugging
+          // can include sensitive information
+          description: `The exception occured because a user with the id ${id} was not found in user table`,
+        },
+      );
+    }
+    
+    return user;
   }
 }

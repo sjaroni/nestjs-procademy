@@ -33,7 +33,7 @@ export class TweetService {
     // userId is from the request
     const user = await this.userService.findUserById(userId);
 
-    if (!user) {
+    if (user === null) {
       throw new NotFoundException(`User with userId ${userId} not found`);
     }
 
@@ -49,7 +49,7 @@ export class TweetService {
   public async createTweet(createTweetDto: CreateTweetDto) {
     // Find user with the given userId from user table
     const user = await this.userService.findUserById(createTweetDto.userId);
-    if (!user) {
+    if (user === null || user === undefined) {
       throw new Error('User not found');
     }
 
