@@ -107,7 +107,7 @@ export class UsersService {
 
   public async findUserById(id: number) {
     const user = await this.userRepository.findOneBy({ id });
-    
+
     if (!user) {
       throw new HttpException(
         {
@@ -126,7 +126,7 @@ export class UsersService {
         },
       );
     }
-    
+
     return user;
   }
 }
