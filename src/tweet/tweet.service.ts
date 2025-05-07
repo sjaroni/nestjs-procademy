@@ -6,6 +6,7 @@ import { Tweet } from './tweet.entity';
 import { CreateTweetDto } from './dto/create-tweet.dto';
 import { HashtagService } from 'src/hashtag/hashtag.service';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
+import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
 
 @Injectable()
 export class TweetService {
@@ -26,7 +27,7 @@ export class TweetService {
     });
   }
 
-  public async getTweets(userId: number) {
+  public async getTweets(userId: number, pageQueryDto: PaginationQueryDto) {
     // Find all the tweets of the user with the given userId
     // user is from tweet.entity
     // id is from user.entity
@@ -43,7 +44,15 @@ export class TweetService {
         user: true,
         hashtags: true,
       },
-    });
+      skip: (pageQueryDto.page! - 1) * pageQueryDto.limit!,
+      take: pageQueryDto.limit,
+    }
+      // limit: 10, page: 1 > skip: 0, take: 10
+      // limit: 10, page: 2 > skip: 10, take: 10
+      // page 1: (1-1) * 10 = 0
+      // page 2: (2-1) * 10 = 10
+      // page 3: (3-1) * 10 = 20
+  );
   }
 
   public async createTweet(createTweetDto: CreateTweetDto) {

@@ -16,10 +16,10 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true, // erlaubt nur die Felder, die im DTO definiert sind
     forbidNonWhitelisted: true, // erlaubt nur die Felder, die im DTO definiert sind
-    transform: true // konvertiert die Daten in den Typ, der im DTO definiert ist
-    // transformOptions: {
-    //   enableImplicitConversion: true,
-    // },
+    transform: true, // konvertiert die Daten in den Typ, der im DTO definiert ist
+    transformOptions: {
+      enableImplicitConversion: true,
+    },
     // skipMissingProperties: false,
   }));
   await app.listen(process.env.PORT ?? 3000);
