@@ -24,6 +24,9 @@ export class TweetService {
         user: true,
         hashtags: true,
       },
+      order: {
+        createdAt: 'ASC',
+      },
     });
   }
 
@@ -46,6 +49,9 @@ export class TweetService {
       },
       skip: (pageQueryDto.page! - 1) * pageQueryDto.limit!,
       take: pageQueryDto.limit,
+      order: {
+        createdAt: 'DESC',
+      },
     }
       // limit: 10, page: 1 > skip: 0, take: 10
       // limit: 10, page: 2 > skip: 10, take: 10
