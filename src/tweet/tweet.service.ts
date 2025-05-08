@@ -53,6 +53,21 @@ export class TweetService {
         createdAt: 'DESC',
       },
     }
+
+    // Code before using pagination provider
+    // ---------------------------------------------
+    // return await this.tweetRepository.find({
+    //   where: { user: { id: userId } },
+    //   relations: {
+    //     user: true,
+    //     hashtags: true,
+    //   },
+    //   skip: (pageQueryDto.page! - 1) * pageQueryDto.limit!,
+    //   take: pageQueryDto.limit,
+    //   order: {
+    //     createdAt: 'DESC',
+    //   },
+    // }
       // limit: 10, page: 1 > skip: 0, take: 10
       // limit: 10, page: 2 > skip: 10, take: 10
       // page 1: (1-1) * 10 = 0

@@ -34,10 +34,10 @@ export class Tweet {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.tweets)
+  @ManyToOne(() => User, (user) => user.tweets, { eager: true }) // Bi-directional relation
   user: User;
 
-  @ManyToMany(() => Hashtag, (hashtag) => hashtag.tweets) // Bi-directional relation
+  @ManyToMany(() => Hashtag, (hashtag) => hashtag.tweets, { eager: true }) // Bi-directional relation
   @JoinTable() // Owning side of the relation
   hashtags: Hashtag[];
 }
