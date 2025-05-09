@@ -7,6 +7,7 @@ import { CreateTweetDto } from './dto/create-tweet.dto';
 import { HashtagService } from 'src/hashtag/hashtag.service';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
 import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
+import { PaginationProvider } from 'src/common/pagination/pagination.provider';
 
 @Injectable()
 export class TweetService {
@@ -15,6 +16,7 @@ export class TweetService {
     private readonly hashtagService: HashtagService,
     @InjectRepository(Tweet)
     private readonly tweetRepository: Repository<Tweet>,
+    private readonly paginationProvider: PaginationProvider<Tweet>,
   ) {}
 
   public async getAllTweets() {
@@ -41,39 +43,45 @@ export class TweetService {
       throw new NotFoundException(`User with userId ${userId} not found`);
     }
 
-    return await this.tweetRepository.find({
-      where: { user: { id: userId } },
-      relations: {
-        user: true,
-        hashtags: true,
-      },
-      skip: (pageQueryDto.page! - 1) * pageQueryDto.limit!,
-      take: pageQueryDto.limit,
-      order: {
-        createdAt: 'DESC',
-      },
-    }
+    return await this.paginationProvider.paginateQuery(
+      pageQueryDto,
+      this.tweetRepository,
+      { user: { id: userId } },
+    );
 
-    // Code before using pagination provider
-    // ---------------------------------------------
-    // return await this.tweetRepository.find({
-    //   where: { user: { id: userId } },
-    //   relations: {
-    //     user: true,
-    //     hashtags: true,
-    //   },
-    //   skip: (pageQueryDto.page! - 1) * pageQueryDto.limit!,
-    //   take: pageQueryDto.limit,
-    //   order: {
-    //     createdAt: 'DESC',
-    //   },
-    // }
-      // limit: 10, page: 1 > skip: 0, take: 10
-      // limit: 10, page: 2 > skip: 10, take: 10
-      // page 1: (1-1) * 10 = 0
-      // page 2: (2-1) * 10 = 10
-      // page 3: (3-1) * 10 = 20
-  );
+    //   return await this.tweetRepository.find({
+    //     where: { user: { id: userId } },
+    //     relations: {
+    //       user: true,
+    //       hashtags: true,
+    //     },
+    //     skip: (pageQueryDto.page! - 1) * pageQueryDto.limit!,
+    //     take: pageQueryDto.limit,
+    //     order: {
+    //       createdAt: 'DESC',
+    //     },
+    //   }
+
+    //   // Code before using pagination provider
+    //   // ---------------------------------------------
+    //   // return await this.tweetRepository.find({
+    //   //   where: { user: { id: userId } },
+    //   //   relations: {
+    //   //     user: true,
+    //   //     hashtags: true,
+    //   //   },
+    //   //   skip: (pageQueryDto.page! - 1) * pageQueryDto.limit!,
+    //   //   take: pageQueryDto.limit,
+    //   //   order: {
+    //   //     createdAt: 'DESC',
+    //   //   },
+    //   // }
+    //     // limit: 10, page: 1 > skip: 0, take: 10
+    //     // limit: 10, page: 2 > skip: 10, take: 10
+    //     // page 1: (1-1) * 10 = 0
+    //     // page 2: (2-1) * 10 = 10
+    //     // page 3: (3-1) * 10 = 20
+    // );
   }
 
   public async createTweet(createTweetDto: CreateTweetDto) {
@@ -127,9 +135,8 @@ export class TweetService {
     // If tweet is not found, throw an error
     // if (tweet) {
     //   throw new Error('Tweet not found');
-    // } 
+    // }
     return await this.tweetRepository.delete(id);
     // Delete the tweet
   }
-
 }
