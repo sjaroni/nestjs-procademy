@@ -14,6 +14,9 @@ export class PaginationProvider<T extends ObjectLiteral> {
     repository: Repository<T>,
     where?: FindOptionsWhere<T>,
   ) {
+
+
+
     const findOptions: FindManyOptions<T> = {
       skip: (paginationQueryDto.page! - 1) * paginationQueryDto.limit!,
       take: paginationQueryDto.limit,
@@ -23,6 +26,25 @@ export class PaginationProvider<T extends ObjectLiteral> {
       findOptions.where = where;
     }
 
-    return await repository.find(findOptions);
+    const result = await repository.find(findOptions);
+    const totalItems = await repository.count();
+    const totalPages = Math.ceil(totalItems / (paginationQueryDto.limit ?? 1));
+    const currentPage = paginationQueryDto.page ?? 1;
+    const nextPage = currentPage === totalPages ? currentPage : currentPage + 1;
+    const prevPage = currentPage === 1 ? currentPage : currentPage - 1;
+
+    const response = {
+      data: result,
+      meta: {
+        itemsPerPage: paginationQueryDto.limit,
+        totalItems: totalItems,
+        currentPage: currentPage,
+        totalPages: totalPages
+      },
+      links: {
+
+      }
+    }
+    return result
   }
 }
