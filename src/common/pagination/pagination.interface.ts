@@ -11,6 +11,6 @@ export interface Paginated<T> {
     last: string;
     current: string;
     next: string;
-    prev: string;
+    previous: string;
   }
 }

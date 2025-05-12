@@ -13,6 +13,9 @@ import { Profile } from 'src/profile/profile.entity';
 import { table } from 'console';
 import { UserAlreadyExistsException } from 'src/customExceptions/user-already-exists.exception';
 // import { ConfigService } from '@nestjs/config';
+import { PaginationProvider } from 'src/common/pagination/pagination.provider';
+import { Paginated } from 'src/common/pagination/pagination.interface';
+import { PaginationQueryDto } from '../common/pagination/dto/pagination-query.dto';
 
 @Injectable()
 export class UsersService {
@@ -24,19 +27,28 @@ export class UsersService {
     private profileRepository: Repository<Profile>,
 
     // private readonly configService: ConfigService,
+
+    private readonly paginationProvider: PaginationProvider<User>
   ) {}
 
-  public async getAllUsers() {
+  public async getAllUsers(paginationQueryDto: PaginationQueryDto): Promise<Paginated<User>> {
     // const environment = this.configService.get<string>('ENV_MODE');
     // const environment = process.env.NODE_ENV;
     // console.log('Environment:', environment);
 
     try {
-      return await this.userRepository.find({
-        relations: {
-          profile: true,
-        },
-      });
+      return await this.paginationProvider.paginateQuery(
+        paginationQueryDto,
+        this.userRepository,
+        undefined,
+        ['profile']
+      )
+
+      // return await this.userRepository.find({
+      //   relations: {
+      //     profile: true,
+      //   },
+      // });
     } catch (error) {
       if (error.code === 'ECONNREFUSED') {
         throw new RequestTimeoutException(

@@ -1,14 +1,17 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { Paginated } from 'src/common/pagination/pagination.interface';
+import { User } from './user.entity';
+import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get()
-  public getUsers() {
-    return this.usersService.getAllUsers();
+  public getUsers(@Query() paginationQueryDto: PaginationQueryDto) {
+    return this.usersService.getAllUsers(paginationQueryDto);
   }
 
   @Get(':id')
@@ -16,10 +19,10 @@ export class UsersController {
     return this.usersService.findUserById(id);
   }
 
-  @Post()
-  public createUser(@Body() user: CreateUserDto) {
-    return this.usersService.createUser(user);
-  }
+  // @Post()
+  // public createUser(@Body() user: CreateUserDto) {
+  //   return this.usersService.createUser(user);
+  // }
 
   @Delete(':id')
   public deleteUser(@Param('id', ParseIntPipe) id: number) {

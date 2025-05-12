@@ -22,12 +22,13 @@ export class TweetController {
   //localhost:3000/tweet
   //localhost:3000/tweet?limit=10&page=1
   @Get()
-  getAllTweets(
+  public getAllTweets(
+    @Query() paginationQueryDto: PaginationQueryDto
     // @Query() getTweetQueryDto: GetTweetQueryDto,    
   ) {
     // console.log(getTweetQueryDto);    
     // console.log('Pagination Query:', paginationQuery);
-    return this.tweetService.getAllTweets();
+    return this.tweetService.getAllTweets(paginationQueryDto);
   }
 
   //localhost:3000/tweet/1
@@ -36,12 +37,12 @@ export class TweetController {
   @Get(':userId')
   public getTweets(
     @Param('userId', ParseIntPipe) userId: number,
-    @Query() paginationQuery: PaginationQueryDto,
+    @Query() paginationQueryDto: PaginationQueryDto,
     // @Query() getTweetQueryDto: GetTweetQueryDto,
   ) {
     // console.log(getTweetQueryDto);
     // console.log('Pagination Query:', paginationQuery);
-    return this.tweetService.getTweets(userId, paginationQuery);
+    return this.tweetService.getTweets(userId, paginationQueryDto);
   }
 
   @Post()
