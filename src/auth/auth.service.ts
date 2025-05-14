@@ -7,8 +7,7 @@ import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    //@Inject(forwardRef(() => UsersService)) // nach Umstellung auf Authentifizierung keine Circular Dependency Injection mehr nötig
-    @Inject(UsersService)
+    @Inject(forwardRef(() => UsersService))    
     private readonly usersService: UsersService,
     @Inject(authConfig.KEY)
     private readonly authConfiguration: ConfigType<typeof authConfig>,
@@ -17,13 +16,13 @@ export class AuthService {
   isAuthenticated: Boolean = false;
 
   login(email: string, password: string) {
-    console.log(this.authConfiguration);
+    // console.log(this.authConfiguration);
     
     return 'Invalid credentials';
   }
 
-  signup(createUserDto: CreateUserDto){
-    return this.usersService.createUser(createUserDto);
+  public async signup(createUserDto: CreateUserDto){
+    return await this.usersService.createUser(createUserDto);
   }
 
 }

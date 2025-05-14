@@ -1,7 +1,9 @@
 import {
   BadRequestException,
+  forwardRef,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   RequestTimeoutException,
 } from '@nestjs/common';
@@ -16,6 +18,7 @@ import { UserAlreadyExistsException } from 'src/customExceptions/user-already-ex
 import { PaginationProvider } from 'src/common/pagination/pagination.provider';
 import { Paginated } from 'src/common/pagination/pagination.interface';
 import { PaginationQueryDto } from '../common/pagination/dto/pagination-query.dto';
+import { HashingProvider } from 'src/auth/provider/hashing.provider';
 
 @Injectable()
 export class UsersService {
@@ -25,10 +28,10 @@ export class UsersService {
 
     @InjectRepository(Profile)
     private profileRepository: Repository<Profile>,
-
     // private readonly configService: ConfigService,
-
-    private readonly paginationProvider: PaginationProvider<User>
+    private readonly paginationProvider: PaginationProvider<User>,
+    @Inject(forwardRef(() => HashingProvider))
+    private readonly hashingProvider: HashingProvider
   ) {}
 
   public async getAllUsers(paginationQueryDto: PaginationQueryDto): Promise<Paginated<User>> {
@@ -87,7 +90,11 @@ export class UsersService {
       }
 
       // Create User Object
-      let user = this.userRepository.create(userDto);
+      let user = this.userRepository.create({
+         ...userDto,
+         password: await this.hashingProvider.hashPassword(userDto.password)
+      });
+
 
       // Save the user object
       return await this.userRepository.save(user);

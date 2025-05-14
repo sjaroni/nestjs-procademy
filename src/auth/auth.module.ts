@@ -14,10 +14,9 @@ import authConfig from './config/auth.config';
     useClass: BcryptProvider,
   }],
   imports: [
-   // forwardRef(() => UsersModule), // nach Umstellung auf Authentifizierung keine Circular Dependency Injection mehr nötig
-   UsersModule,
+   forwardRef(() => UsersModule),
     ConfigModule.forFeature(authConfig)
   ],
-  exports: [AuthService],
+  exports: [AuthService, HashingProvider],
 })
 export class AuthModule {}
