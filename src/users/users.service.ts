@@ -6,6 +6,7 @@ import {
   Inject,
   Injectable,
   RequestTimeoutException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -31,10 +32,12 @@ export class UsersService {
     // private readonly configService: ConfigService,
     private readonly paginationProvider: PaginationProvider<User>,
     @Inject(forwardRef(() => HashingProvider))
-    private readonly hashingProvider: HashingProvider
+    private readonly hashingProvider: HashingProvider,
   ) {}
 
-  public async getAllUsers(paginationQueryDto: PaginationQueryDto): Promise<Paginated<User>> {
+  public async getAllUsers(
+    paginationQueryDto: PaginationQueryDto,
+  ): Promise<Paginated<User>> {
     // const environment = this.configService.get<string>('ENV_MODE');
     // const environment = process.env.NODE_ENV;
     // console.log('Environment:', environment);
@@ -44,8 +47,8 @@ export class UsersService {
         paginationQueryDto,
         this.userRepository,
         undefined,
-        ['profile']
-      )
+        ['profile'],
+      );
 
       // return await this.userRepository.find({
       //   relations: {
@@ -91,10 +94,9 @@ export class UsersService {
 
       // Create User Object
       let user = this.userRepository.create({
-         ...userDto,
-         password: await this.hashingProvider.hashPassword(userDto.password)
+        ...userDto,
+        password: await this.hashingProvider.hashPassword(userDto.password),
       });
-
 
       // Save the user object
       return await this.userRepository.save(user);
@@ -152,6 +154,24 @@ export class UsersService {
           description: `The exception occured because a user with the id ${id} was not found in user table`,
         },
       );
+    }
+
+    return user;
+  }
+
+  public async findUserByUsername(username: string) {
+    let user: User | null = null;
+
+    try {
+      user = await this.userRepository.findOneBy({ username });
+    } catch (error) {
+      throw new RequestTimeoutException(error, {
+        description: 'User with given username could not be found!s',
+      });
+    }
+
+    if (!user) {
+      throw new UnauthorizedException('User does not exist!');
     }
 
     return user;

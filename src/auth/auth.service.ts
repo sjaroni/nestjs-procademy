@@ -1,8 +1,11 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, Inject, forwardRef, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { UsersService } from 'src/users/users.service';
 import authConfig from './config/auth.config';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
+import { LoginDto } from './dto/login.dto';
+import { HashingProvider } from './provider/hashing.provider';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -11,14 +14,43 @@ export class AuthService {
     private readonly usersService: UsersService,
     @Inject(authConfig.KEY)
     private readonly authConfiguration: ConfigType<typeof authConfig>,
+    private readonly hashingProvider: HashingProvider,
+    private readonly jwtService: JwtService,
   ) {}
 
   isAuthenticated: Boolean = false;
 
-  login(email: string, password: string) {
-    // console.log(this.authConfiguration);
+  public async login(loginDto: LoginDto) {
+    // Find the user with username
+    let user = await this.usersService.findUserByUsername(loginDto.username);
+
+    // If user is available, compare password
+    let isEqual: boolean = false;
+
+    isEqual = await this.hashingProvider.comparePassword(loginDto.password, user.password); 
+
+    if(!isEqual){
+      throw new UnauthorizedException('Incorrect password');
+    }
     
-    return 'Invalid credentials';
+    // if password match, login success - return access token
+    // generate jwt and send it in the response
+    // no sensitive data in payload!
+    const token = await this.jwtService.signAsync(
+      {
+        sub: user.id,
+        email: user.email
+      },
+      {
+        secret: this.authConfiguration.secret,
+        expiresIn: this.authConfiguration.expiresIn,
+        audience: this.authConfiguration.audience,
+        issuer: this.authConfiguration.issuer
+      });
+
+    return {
+      token: token
+    };
   }
 
   public async signup(createUserDto: CreateUserDto){
