@@ -9,6 +9,7 @@ import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 import authConfig from '../config/auth.config';
+import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class AuthorizeGuard implements CanActivate {
@@ -16,9 +17,22 @@ export class AuthorizeGuard implements CanActivate {
     private readonly jwtService: JwtService,
     @Inject(authConfig.KEY)
     private readonly authConfiguration: ConfigType<typeof authConfig>,
+
+    private readonly reflector: Reflector // read metadata
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+
+    // read isPublic metadata
+    const isPublic = this.reflector.getAllAndOverride('isPublic', [
+      context.getHandler(), // check if the method has the metadata (e.g. controller method @Post('login'))
+      context.getClass(), // check if the class has the metadata (e.g. controller @Controller('users'))
+    ])
+
+    if(isPublic) {
+      return true; // if the route is public, allow access
+    }
+
     // Extract the request object from the context
     const request = context.switchToHttp().getRequest();
 

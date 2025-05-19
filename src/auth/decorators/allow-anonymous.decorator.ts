@@ -1,5 +1,5 @@
+import { SetMetadata } from "@nestjs/common";
+
 export const AllowAnonymous = () => {
-  return (target: any, propertyKey: string, propertyDescriptor: PropertyDescriptor) => {
-    console.log('AllowAnonymous decorator called' + target + propertyKey);
-  };
+  return SetMetadata('isPublic', true);
 };
