@@ -14,6 +14,7 @@ import { AuthModule } from 'src/auth/auth.module';
   imports: [
     PaginationModule,
     forwardRef(() => AuthModule),
-    TypeOrmModule.forFeature([User, Profile])],
+    TypeOrmModule.forFeature([User, Profile]),    
+  ],
 })
 export class UsersModule {}

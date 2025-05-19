@@ -6,6 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // localhost:4200 (frontend) -> localhost:3000 (backend) = CORS Error
   app.enableCors(); // <- alles erlaubt
+  
   // app.enableCors({
   //   origin: 'http://localhost:4200',
   //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',

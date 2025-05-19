@@ -35,16 +35,13 @@ export class AuthorizeGuard implements CanActivate {
         token,
         this.authConfiguration        
       );
-      
-      
-      request['user'] = payload;
-      console.log(payload);
-      
+            
+      request['user'] = payload;      
 
     } catch (error) {
       throw new UnauthorizedException();
     }
 
-    return false;
+    return true;
   }
 }
