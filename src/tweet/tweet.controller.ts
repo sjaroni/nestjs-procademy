@@ -8,6 +8,7 @@ import {
   Patch,
   Delete,
   Query,
+  Req,
 } from '@nestjs/common';
 import { TweetService } from './tweet.service';
 import { CreateTweetDto } from './dto/create-tweet.dto';
@@ -46,8 +47,10 @@ export class TweetController {
   }
 
   @Post()
-  public createTweet(@Body() tweet: CreateTweetDto) {
-    return this.tweetService.createTweet(tweet);
+  public createTweet(@Body() tweet: CreateTweetDto, @Req() request) {
+    // return this.tweetService.createTweet(tweet);
+    console.log(request.user);
+    
   }
 
   @Patch()
