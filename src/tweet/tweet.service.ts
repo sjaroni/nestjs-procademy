@@ -1,4 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  Req,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
@@ -9,6 +16,9 @@ import { UpdateTweetDto } from './dto/update-tweet.dto';
 import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
 import { PaginationProvider } from 'src/common/pagination/pagination.provider';
 import { Paginated } from 'src/common/pagination/pagination.interface';
+import { ActiveUserType } from 'src/auth/interfaces/active-user-type.interface';
+import { hash } from 'crypto';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class TweetService {
@@ -97,17 +107,35 @@ export class TweetService {
     // );
   }
 
-  public async createTweet(createTweetDto: CreateTweetDto) {
-    // Find user with the given userId from user table
-    const user = await this.userService.findUserById(createTweetDto.userId);
-    if (user === null || user === undefined) {
-      throw new Error('User not found');
+  public async createTweet(createTweetDto: CreateTweetDto, userId: number) {
+    let user: User | null | undefined;
+    let hashtags: string | any[] = [];
+
+    try {
+      // Find user with the given userId from user table
+      user = await this.userService.findUserById(userId);
+
+      if (user === null || user === undefined) {
+        throw new Error('User not found');
+      }
+
+      // Fetch all the hashtags based on hastag array
+      if (createTweetDto.hashtags) {
+        hashtags = await this.hashtagService.findHashtags(
+          createTweetDto.hashtags || [],
+        );
+      }
+    } catch (error) {
+      throw new RequestTimeoutException();
     }
 
-    // Fetch all the hashtags based on hastag array
-    const hashtags = await this.hashtagService.findHashtags(
-      createTweetDto.hashtags || [],
-    );
+    if (
+      createTweetDto.hashtags &&
+      createTweetDto.hashtags?.length !== hashtags?.length
+    ) {
+      // console.log('Hashtags not found');
+      throw new BadRequestException();
+    }
 
     // create a new tweet
     let tweet = this.tweetRepository.create({
@@ -115,8 +143,13 @@ export class TweetService {
       user,
       hashtags,
     });
-    // Save the tweet
-    return await this.tweetRepository.save(tweet);
+
+    try {
+      // Save the tweet
+      return await this.tweetRepository.save(tweet);
+    } catch (error) {
+      throw new ConflictException(error);
+    }
   }
 
   public async updateTweet(updateTweetDto: UpdateTweetDto) {
