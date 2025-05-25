@@ -55,12 +55,26 @@ export class AuthService {
     return await this.usersService.createUser(createUserDto);
   }
 
-  public async refreshToken(refreshTokenDto: RefreshTokenDto){
-    // Verify the refresh token, extract user id from it
+  public async refreshToken(refreshTokenDto: RefreshTokenDto) {
+    try {
+      // Verify the refresh token, extract user id from it
+      const { sub } = await this.jwtService.verifyAsync(
+        refreshTokenDto.refreshToken,
+        {
+          secret: this.authConfiguration.secret,
+          audience: this.authConfiguration.audience,
+          issuer: this.authConfiguration.issuer,
+        },
+      );
 
-    // Find the user from db using user id
+      // Find the user from db using user id
+      const user: User = await this.usersService.findUserById(sub);
 
-    // Generate an access token and refresh token
+      // Generate an access token and refresh token
+      return await this.gerateToken(user);
+    } catch (error) {
+        throw new UnauthorizedException(error);
+    }
   }
 
   private async signToken<T>(userId: number, expiresIn: number, payload?: T) {

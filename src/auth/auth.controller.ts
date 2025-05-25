@@ -24,10 +24,11 @@ export class AuthController {
     return await this.authService.signup(createUserDto);
   }
 
+  //localhost:3000/auth/refresh-token
   @AllowAnonymous()
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   public async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
-    this.authService.refreshToken(refreshTokenDto);
+    return this.authService.refreshToken(refreshTokenDto);
   }
 }
