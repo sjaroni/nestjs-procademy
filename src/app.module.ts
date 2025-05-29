@@ -15,6 +15,7 @@ import envValidator from './config/env.validation';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthorizeGuard } from './auth/guards/authorize.guard';
 import { JwtModule } from '@nestjs/jwt';
+import { TasksModule } from './tasks/tasks.module';
 import authConfig from './auth/config/auth.config';
 
 const ENV = process.env.NODE_ENV;
@@ -49,6 +50,7 @@ const ENV = process.env.NODE_ENV;
     PaginationModule,
     ConfigModule.forFeature(authConfig),
     JwtModule.registerAsync(authConfig.asProvider()),
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [

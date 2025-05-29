@@ -23,16 +23,19 @@ export class HashtagService {
     });
   }
 
-  public async deleteHashtag(id: number) {    
+  public async deleteHashtag(id: number) {
     // await this.hashtagRepository.delete(id);
-    await this.hashtagRepository.delete({id: id});
-    return {deleted: true, id};
+    await this.hashtagRepository.delete({ id: id });
+    return { deleted: true, id };
   }
 
-  public async softDeleteHashtag(id: number) {    
+  public async softDeleteHashtag(id: number) {
     // await this.hashtagRepository.delete(id);
-    await this.hashtagRepository.softDelete({id: id});
-    return {deleted: true, id};
+    await this.hashtagRepository.softDelete({ id: id });
+    return { deleted: true, id };
   }
 
+  public async handleHashtagCleanupCheck() {
+    console.log('Hashtag cleanup started');
+  }
 }
