@@ -3,6 +3,7 @@ import { User } from 'src/users/user.entity';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
@@ -33,6 +34,9 @@ export class Tweet {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 
   @ManyToOne(() => User, (user) => user.tweets, { eager: true }) // Bi-directional relation
   user: User;

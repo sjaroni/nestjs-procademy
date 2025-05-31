@@ -185,4 +185,10 @@ export class TweetService {
     return await this.tweetRepository.delete(id);
     // Delete the tweet
   }
+
+  public async softDeleteTweet(id: number) {
+    // await this.hashtagRepository.delete(id);
+    await this.tweetRepository.softDelete({ id: id });
+    return { deleted: true, id };
+  }
 }

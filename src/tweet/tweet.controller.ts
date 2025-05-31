@@ -62,4 +62,9 @@ export class TweetController {
   public deleteTweet(@Param('id', ParseIntPipe) id: number) {
    return this.tweetService.deleteTweet(id);
   }
+
+  @Delete('softdelete/:id')
+  public softDeleteTweet(@Param('id', ParseIntPipe) id: number) {
+    return this.tweetService.softDeleteTweet(id);
+  }
 }
