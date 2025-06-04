@@ -48,7 +48,7 @@ export class AuthService {
     // if password match, login success - return access token
     // generate jwt and send it in the response
     // no sensitive data in payload!
-    return this.gerateToken(user);
+    return this.generateToken(user);
   }
 
   public async signup(createUserDto: CreateUserDto) {
@@ -71,7 +71,7 @@ export class AuthService {
       const user: User = await this.usersService.findUserById(sub);
 
       // Generate an access token and refresh token
-      return await this.gerateToken(user);
+      return await this.generateToken(user);
     } catch (error) {
         throw new UnauthorizedException(error);
     }
@@ -92,7 +92,7 @@ export class AuthService {
     );
   }
 
-  private async gerateToken(user: User) {
+  private async generateToken(user: User) {
     // Generate access token
     const accessToken = await this.signToken<Partial<ActiveUserType>>(
       user.id,
