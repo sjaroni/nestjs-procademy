@@ -36,6 +36,6 @@ export class HashtagService {
   }
 
   public async handleHashtagCleanupCheck() {
-    console.log('Hashtag cleanup started');
+    console.log('Hashtag cleanup started: ' + new Date().toISOString());
   }
 }
