@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { LoginDto } from './dto/login.dto';
@@ -31,4 +31,18 @@ export class AuthController {
   public async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
     return this.authService.refreshToken(refreshTokenDto);
   }
+
+  // localhost:3000/auth/check
+  @AllowAnonymous()
+  @Get('check')
+  checkAuth(@Request() req) {
+    // req.user wurde im JwtStrategy zurückgegeben
+    // return {
+    //   isAuthenticated: true,
+    //   user: req.user,
+    // };
+    console.log(req);
+    return req + 'hallo';
+  }
+
 }

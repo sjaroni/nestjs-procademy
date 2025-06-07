@@ -13,7 +13,6 @@ import { HashingProvider } from './provider/hashing.provider';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/user.entity';
 import { ActiveUserType } from './interfaces/active-user-type.interface';
-import { access } from 'fs';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Injectable()
