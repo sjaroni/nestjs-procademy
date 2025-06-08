@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
 import authConfig from '../config/auth.config';
 import { Reflector } from '@nestjs/core';
 import { REQUEST_USER_KEY } from 'src/constants/constants';

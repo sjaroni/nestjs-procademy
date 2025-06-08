@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { LoginDto } from './dto/login.dto';
@@ -33,16 +41,9 @@ export class AuthController {
   }
 
   // localhost:3000/auth/check
-  @AllowAnonymous()
   @Get('check')
-  checkAuth(@Request() req) {
-    // req.user wurde im JwtStrategy zurückgegeben
-    // return {
-    //   isAuthenticated: true,
-    //   user: req.user,
-    // };
-    console.log(req);
-    return req + 'hallo';
+  @HttpCode(HttpStatus.OK)
+  public async checkAuth(@Request() req) {
+    return { authenticated: true, user: req.user };
   }
-
 }
