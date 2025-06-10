@@ -96,7 +96,9 @@ export class AuthService {
     const accessToken = await this.signToken<Partial<ActiveUserType>>(
       user.id,
       this.authConfiguration.expiresIn,
-      { email: user.email },
+      // { email: user.email },
+      { username: user.username },
+      // { email: user.email, username: user.username },
     );
 
     // Generate refresh token
